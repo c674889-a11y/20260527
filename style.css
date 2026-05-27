@@ -1,0 +1,358 @@
+/* ==========================================
+   ANIME-X // 科技明亮風格核心樣式庫
+   ========================================== */
+
+/* 1. 科技感全域變數定義 */
+:root {
+    --bg-main: #f5f8fa;
+    --bg-card: rgba(255, 255, 255, 0.85);
+    --text-main: #0f172a;
+    --text-muted: #64748b;
+    
+    /* 螢光科技霓虹色 */
+    --neon-blue: #00f0ff;
+    --neon-pink: #ff007f;
+    --neon-glow: rgba(0, 240, 255, 0.4);
+    
+    /* 系統布局參數 */
+    --border-tech: 1px solid rgba(0, 240, 255, 0.3);
+    --radius-tech: 8px;
+    --transition-fast: all 0.25s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+/* 2. 基礎底色與矩陣網格背景 */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+}
+
+body {
+    background-color: var(--bg-main);
+    /* 點陣晶格背景效果 */
+    background-image: 
+        radial-gradient(rgba(0, 240, 255, 0.06) 1.5px, transparent 0),
+        radial-gradient(rgba(255, 0, 127, 0.04) 1.5px, transparent 0);
+    background-size: 32px 32px;
+    background-position: 0 0, 16px 16px;
+    color: var(--text-main);
+    min-height: 100vh;
+    padding-bottom: 80px;
+}
+
+/* 3. 頂部抬頭顯示器導覽列 (HUD Header) */
+header {
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-bottom: 2px solid var(--neon-blue);
+    padding: 16px 40px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 4px 30px rgba(0, 240, 255, 0.08);
+}
+
+.logo {
+    font-size: 26px;
+    font-weight: 900;
+    letter-spacing: 3px;
+    background: linear-gradient(45deg, var(--text-main), var(--neon-pink));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    cursor: pointer;
+    text-transform: uppercase;
+}
+
+/* 4. 數據流動感控制按鈕 */
+.nav-btn {
+    background: transparent;
+    border: 1px solid var(--neon-blue);
+    color: var(--text-main);
+    padding: 10px 20px;
+    border-radius: var(--radius-tech);
+    cursor: pointer;
+    font-weight: bold;
+    letter-spacing: 1px;
+    transition: var(--transition-fast);
+    box-shadow: 0 0 10px rgba(0, 240, 255, 0.15);
+}
+
+.nav-btn:hover {
+    background: var(--neon-blue);
+    color: #fff;
+    box-shadow: 0 0 18px var(--neon-blue);
+    transform: translateY(-2px);
+}
+
+.nav-btn-secondary {
+    border-color: var(--text-muted);
+    color: var(--text-muted);
+}
+
+.nav-btn-secondary:hover {
+    background: var(--text-muted);
+    color: #fff;
+    box-shadow: 0 0 15px rgba(0,0,0,0.2);
+}
+
+/* 5. 核心佈局容器 */
+.container {
+    max-width: 1200px;
+    margin: 40px auto;
+    padding: 0 24px;
+}
+
+/* 頁面切換機制 */
+.page {
+    display: none;
+}
+.page.active {
+    display: block;
+    animation: techFadeIn 0.4s ease-out;
+}
+
+@keyframes techFadeIn {
+    from { opacity: 0; transform: translateY(15px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* 6. 首頁：動漫網格與卡片設計 */
+.anime-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 32px;
+}
+
+.anime-card {
+    background: var(--bg-card);
+    border: 1px solid rgba(0, 0, 0, 0.06);
+    border-radius: var(--radius-tech);
+    overflow: hidden;
+    cursor: pointer;
+    transition: var(--transition-fast);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.03);
+    position: relative;
+}
+
+.anime-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; height: 3px;
+    background: linear-gradient(90deg, var(--neon-blue), var(--neon-pink));
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+.anime-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 15px 35px rgba(0, 240, 255, 0.18);
+    border-color: var(--neon-blue);
+}
+
+.anime-card:hover::before {
+    opacity: 1;
+}
+
+.anime-cover {
+    width: 100%;
+    height: 320px;
+    object-fit: cover;
+    background: #e2e8f0;
+    transition: var(--transition-fast);
+}
+
+.anime-info {
+    padding: 16px;
+}
+
+.anime-title {
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 10px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* 科技感評分標籤 */
+.anime-rating-tag {
+    display: inline-flex;
+    align-items: center;
+    background: rgba(0, 240, 255, 0.08);
+    color: #0284c7;
+    padding: 4px 10px;
+    border-radius: 4px;
+    font-size: 14px;
+    font-weight: 800;
+    border-left: 3px solid var(--neon-blue);
+    font-family: monospace;
+}
+
+/* 7. 獨立詳細介紹頁樣式 */
+.detail-wrapper {
+    display: grid;
+    grid-template-columns: 360px 1fr;
+    gap: 48px;
+    background: var(--bg-card);
+    padding: 40px;
+    border-radius: var(--radius-tech);
+    border: var(--border-tech);
+    box-shadow: 0 20px 45px rgba(0, 240, 255, 0.06);
+}
+
+@media (max-width: 768px) {
+    .detail-wrapper { grid-template-columns: 1fr; gap: 30px; padding: 20px; }
+}
+
+.detail-cover {
+    width: 100%;
+    border-radius: var(--radius-tech);
+    box-shadow: 0 12px 30px rgba(0,0,0,0.1);
+    border: 1px solid rgba(255,255,255,0.8);
+}
+
+.detail-content h2 {
+    font-size: 34px;
+    margin-bottom: 16px;
+    font-weight: 800;
+    border-bottom: 2px solid rgba(0,0,0,0.04);
+    padding-bottom: 12px;
+}
+
+.plot-title {
+    margin-bottom: 12px; 
+    color: var(--neon-pink);
+    font-weight: 700;
+    letter-spacing: 1px;
+}
+
+.plot-box {
+    background: rgba(0, 0, 0, 0.02);
+    padding: 24px;
+    border-left: 4px solid var(--neon-pink);
+    border-radius: 4px;
+    margin-bottom: 32px;
+    line-height: 1.8;
+    color: var(--text-muted);
+    font-size: 16px;
+}
+
+/* 評分模組 */
+.rating-section {
+    background: rgba(0, 240, 255, 0.04);
+    padding: 24px;
+    border-radius: var(--radius-tech);
+    border: 1px dashed var(--neon-blue);
+}
+
+.rating-section h3 {
+    font-size: 16px;
+    letter-spacing: 1px;
+    margin-bottom: 8px;
+}
+
+.stars {
+    display: flex;
+    gap: 12px;
+    margin: 16px 0;
+}
+
+.star {
+    font-size: 38px;
+    cursor: pointer;
+    color: #cbd5e1;
+    transition: transform 0.1s, color 0.2s;
+}
+
+.star:hover {
+    transform: scale(1.15);
+}
+
+.star.active {
+    color: #ffb703;
+    text-shadow: 0 0 12px rgba(255, 183, 3, 0.6);
+}
+
+.rating-status {
+    font-size: 14px; 
+    color: var(--text-muted);
+    font-family: monospace;
+}
+
+/* 8. 數據寫入表單樣式 (Input Form) */
+.form-box {
+    max-width: 650px;
+    margin: 0 auto;
+    background: var(--bg-card);
+    padding: 40px;
+    border-radius: var(--radius-tech);
+    border: var(--border-tech);
+    box-shadow: 0 25px 50px rgba(0,0,0,0.05);
+}
+
+.form-box h2 {
+    margin-bottom: 30px;
+    text-align: center;
+    letter-spacing: 2px;
+    font-weight: 800;
+}
+
+.form-group {
+    margin-bottom: 24px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 10px;
+    font-weight: 700;
+    font-size: 14px;
+    text-transform: uppercase;
+}
+
+.form-control {
+    width: 100%;
+    padding: 14px;
+    border: 1px solid #cbd5e1;
+    border-radius: 6px;
+    background: rgba(255, 255, 255, 0.6);
+    font-size: 16px;
+    transition: var(--transition-fast);
+    color: var(--text-main);
+}
+
+.form-control:focus {
+    outline: none;
+    border-color: var(--neon-blue);
+    background: #ffffff;
+    box-shadow: 0 0 12px rgba(0, 240, 255, 0.3);
+}
+
+textarea.form-control {
+    resize: vertical;
+}
+
+/* 霓虹漸層送出鈕 */
+.submit-btn {
+    width: 100%;
+    background: linear-gradient(45deg, var(--neon-blue), var(--neon-pink));
+    color: white;
+    border: none;
+    padding: 16px;
+    border-radius: 6px;
+    font-size: 16px;
+    font-weight: bold;
+    letter-spacing: 2px;
+    cursor: pointer;
+    box-shadow: 0 4px 15px rgba(255, 0, 127, 0.25);
+    transition: var(--transition-fast);
+}
+
+.submit-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 22px rgba(255, 0, 127, 0.45);
+}
