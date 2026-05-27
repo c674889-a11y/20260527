@@ -1,0 +1,16 @@
+:root {
+    /* 背景與基礎色：純白、冷調淺灰 */
+    --bg-main: #f0f4f8;       /* 帶有一點點藍灰色調的科技白 */
+    --bg-card: rgba(255, 255, 255, 0.85); /* 玻璃生體質感底色 */
+    --text-main: #0f172a;     /* 深邃極光黑，用於主要文字 */
+    --text-muted: #64748b;    /* 數位灰色，用於次要說明 */
+
+    /* 關鍵霓虹點綴色（亮點） */
+    --neon-blue: #00f0ff;     /* 電光藍（Cyber Blue） */
+    --neon-pink: #ff007f;     /* 邊緣粉（Laser Pink） */
+    --neon-green: #39ff14;    /* 矩陣綠（Matrix Green） */
+    
+    /* 科技感邊框與陰影 */
+    --border-tech: rgba(0, 240, 255, 0.3);
+    --glow-blue: 0 0 15px rgba(0, 240, 255, 0.5);
+}
