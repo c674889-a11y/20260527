@@ -132,3 +132,277 @@
         </div>
 
     </div>
+
+    <script>
+        // 1. 初始化預設實驗數據 (新增細項評分欄位)
+        const defaultAnimes = [
+            {
+                id: 1,
+                title: "Cyberpunk: Edgerunners",
+                plot: "講述一名街頭浪子試圖在迷戀科技和身體改造的未來城市中生存下來。在失去了一切之後，他選擇成為一名邊緣行者（Edgerunners）——一種法外狂徒的雇傭兵，以此維持生計。",
+                cover: "https://images.unsplash.com/photo-1578632767115-351597cf2477?w=600",
+                rating: 4.8, // 總平均
+                ratingCount: 1,
+                scores: { story: 4.8, direction: 4.9, music: 4.7 } // 細項
+            },
+            {
+                id: 2,
+                title: "進擊的巨人 (Attack on Titan)",
+                plot: "百年前世界莫名出現神秘的巨人怪物，不斷殘忍食人，人類幾乎慘遭滅絕。倖存的人類建造了三道巨大防護牆來阻止巨人的入侵，並享受了一百年的和平。直到那一天，超大型巨人打破了牆壁...",
+                cover: "https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?w=600",
+                rating: 4.9,
+                ratingCount: 1,
+                scores: { story: 5.0, direction: 4.9, music: 4.8 }
+            }
+        ];
+
+        // 2. 資料庫讀取 (使用 v3 識別碼避免快取衝突)
+        let animeDatabase = JSON.parse(localStorage.getItem('animeData_v3')) || defaultAnimes;
+        let currentAnimeId = null;
+
+        // 3. 視窗分頁切換控制
+        function switchPage(pageId) {
+            document.querySelectorAll('.page').forEach(page => page.classList.remove('active'));
+            document.getElementById(pageId).classList.add('active');
+            window.scrollTo(0, 0);
+            
+            if(pageId === 'home') {
+                renderAnimeList();
+            }
+        }
+
+        // 4. 渲染首頁卡片矩陣
+        function renderAnimeList() {
+            const grid = document.getElementById('animeGrid');
+            grid.innerHTML = '';
+
+            if (animeDatabase.length === 0) {
+                grid.innerHTML = `<div style="grid-column: 1/-1; text-align: center; color: var(--text-muted); padding: 40px;">目前資料庫內無數據，請點擊右上角新增。</div>`;
+                return;
+            }
+
+            animeDatabase.forEach(anime => {
+                const card = document.createElement('div');
+                card.className = 'anime-card';
+                card.onclick = () => openDetailPage(anime.id);
+                
+                card.innerHTML = `
+                    <img class="anime-cover" src="${anime.cover}" alt="${anime.title}" loading="lazy">
+                    <div class="anime-info">
+                        <div class="anime-title">${anime.title}</div>
+                        <div class="anime-rating-tag">★ ${anime.rating.toFixed(1)}</div>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        // 5. 載入並產生單獨的「動漫獨立頁面」
+        function openDetailPage(id) {
+            currentAnimeId = id;
+            const anime = animeDatabase.find(a => a.id === id);
+            const wrapper = document.getElementById('detailWrapper');
+            
+            wrapper.innerHTML = `
+                <div>
+                    <img class="detail-cover" src="${anime.cover}" alt="${anime.title}">
+                </div>
+                <div class="detail-content">
+                    <h2>${anime.title}</h2>
+                    
+                    <div style="margin-bottom: 16px;">
+                        <span class="anime-rating-tag" style="font-size: 16px; padding: 6px 12px;">
+                            綜合核心評分：★ <span id="avgRating">${anime.rating.toFixed(1)}</span> (${anime.ratingCount} 次評分)
+                        </span>
+                    </div>
+
+                    <div class="tech-score-board">
+                        <div class="score-block">劇情核心<strong id="board-story">${anime.scores.story.toFixed(1)}</strong></div>
+                        <div class="score-block">畫面演出<strong id="board-direction">${anime.scores.direction.toFixed(1)}</strong></div>
+                        <div class="score-block">音樂音效<strong id="board-music">${anime.scores.music.toFixed(1)}</strong></div>
+                    </div>
+
+                    <h3 class="plot-title">// 劇情簡介 DESCRIPTION</h3>
+                    <div class="plot-box">
+                        ${anime.plot.replace(/\n/g, '<br>')}
+                    </div>
+                    
+                    <div class="rating-section">
+                        <h3>// 數據寫入反饋終端 MULTI-RATING</h3>
+                        
+                        <div class="rating-row">
+                            <span class="rating-label">劇情（Story）</span>
+                            <div class="sub-stars" data-dimension="story">
+                                <span class="sub-star" data-value="1">★</span>
+                                <span class="sub-star" data-value="2">★</span>
+                                <span class="sub-star" data-value="3">★</span>
+                                <span class="sub-star" data-value="4">★</span>
+                                <span class="sub-star" data-value="5">★</span>
+                            </div>
+                        </div>
+
+                        <div class="rating-row">
+                            <span class="rating-label">演出（Direction）</span>
+                            <div class="sub-stars" data-dimension="direction">
+                                <span class="sub-star" data-value="1">★</span>
+                                <span class="sub-star" data-value="2">★</span>
+                                <span class="sub-star" data-value="3">★</span>
+                                <span class="sub-star" data-value="4">★</span>
+                                <span class="sub-star" data-value="5">★</span>
+                            </div>
+                        </div>
+
+                        <div class="rating-row">
+                            <span class="rating-label">音樂（Music）</span>
+                            <div class="sub-stars" data-dimension="music">
+                                <span class="sub-star" data-value="1">★</span>
+                                <span class="sub-star" data-value="2">★</span>
+                                <span class="sub-star" data-value="3">★</span>
+                                <span class="sub-star" data-value="4">★</span>
+                                <span class="sub-star" data-value="5">★</span>
+                            </div>
+                        </div>
+
+                        <button class="submit-btn" id="submitMultiRatingBtn" style="margin-top:15px; padding:12px;">確定提交多維度評分</button>
+                        <p class="rating-status" id="ratingStatus" style="margin-top:10px; text-align:center;">調整上方星等後，點選送出按鍵。</p>
+                    </div>
+
+                    <div class="delete-container">
+                        <button class="delete-btn" onclick="deleteAnime(${anime.id})">⚠️ 刪除此部動漫數據</button>
+                    </div>
+                </div>
+            `;
+            
+            setupMultiRating();
+            switchPage('detail-page');
+        }
+
+        // 6. 多維度細項評分互動邏輯
+        function setupMultiRating() {
+            const tempRatings = { story: 0, direction: 0, music: 0 };
+            const containers = document.querySelectorAll('.sub-stars');
+
+            containers.forEach(container => {
+                const dimension = container.getAttribute('data-dimension');
+                const stars = container.querySelectorAll('.sub-star');
+
+                stars.forEach(star => {
+                    // 滑鼠移入高亮
+                    star.onmouseover = function() {
+                        const val = parseInt(this.getAttribute('data-value'));
+                        stars.forEach(s => {
+                            if(parseInt(s.getAttribute('data-value')) <= val) s.classList.add('active');
+                        });
+                    };
+                    // 滑鼠移出復原
+                    star.onmouseout = function() {
+                        stars.forEach(s => {
+                            const val = parseInt(s.getAttribute('data-value'));
+                            if (val <= tempRatings[dimension]) {
+                                s.classList.add('active');
+                            } else {
+                                s.classList.remove('active');
+                            }
+                        });
+                    };
+                    // 點擊暫存分數
+                    star.onclick = function() {
+                        tempRatings[dimension] = parseInt(this.getAttribute('data-value'));
+                        document.getElementById('ratingStatus').innerText = `已設定 — 劇情:${tempRatings.story}星 | 演出:${tempRatings.direction}星 | 音樂:${tempRatings.music}星`;
+                    };
+                });
+            });
+
+            // 提交評分確認
+            document.getElementById('submitMultiRatingBtn').onclick = function() {
+                if (tempRatings.story === 0 || tempRatings.direction === 0 || tempRatings.music === 0) {
+                    alert("請完成所有維度（劇情、演出、音樂）的評分後再行送出！");
+                    return;
+                }
+
+                const anime = animeDatabase.find(a => a.id === currentAnimeId);
+                
+                // 1. 計算各維度新平均分
+                anime.scores.story = ((anime.scores.story * anime.ratingCount) + tempRatings.story) / (anime.ratingCount + 1);
+                anime.scores.direction = ((anime.scores.direction * anime.ratingCount) + tempRatings.direction) / (anime.ratingCount + 1);
+                anime.scores.music = ((anime.scores.music * anime.ratingCount) + tempRatings.music) / (anime.ratingCount + 1);
+                
+                // 2. 更新總評分次數
+                anime.ratingCount += 1;
+                
+                // 3. 綜合核心評分 = 三個維度平均分數的加總平均
+                anime.rating = (anime.scores.story + anime.scores.direction + anime.scores.music) / 3;
+
+                // 儲存至資料庫
+                localStorage.setItem('animeData_v3', JSON.stringify(animeDatabase));
+
+                // 刷新介面顯示
+                document.getElementById('avgRating').innerText = anime.rating.toFixed(1);
+                document.getElementById('board-story').innerText = anime.scores.story.toFixed(1);
+                document.getElementById('board-direction').innerText = anime.scores.direction.toFixed(1);
+                document.getElementById('board-music').innerText = anime.scores.music.toFixed(1);
+                
+                document.getElementById('ratingStatus').innerText = "數據同步完成！多維度評分已寫入。";
+                this.disabled = true;
+                this.style.background = "#cbd5e1";
+                this.style.boxShadow = "none";
+                this.innerText = "評分已成功上傳";
+            };
+        }
+
+        // 7. 動漫數據刪除功能
+        function deleteAnime(id) {
+            const anime = animeDatabase.find(a => a.id === id);
+            const check = confirm(`【安全警告】您確定要從系統庫中徹底刪除《${anime.title}》嗎？此操作不可逆。`);
+            
+            if (check) {
+                // 過濾掉該 ID 的資料
+                animeDatabase = animeDatabase.filter(a => a.id !== id);
+                localStorage.setItem('animeData_v3', JSON.stringify(animeDatabase));
+                alert("數據已成功抹除。");
+                switchPage('home');
+            }
+        }
+
+        // 8. 新增動漫表單與封面圖片轉化 (設定初始細項分數為 0)
+        document.getElementById('animeForm').onsubmit = function(e) {
+            e.preventDefault();
+            
+            const title = document.getElementById('titleInput').value;
+            const plot = document.getElementById('plotInput').value;
+            const fileInput = document.getElementById('coverInput');
+            const file = fileInput.files[0];
+            
+            const reader = new FileReader();
+            
+            reader.onloadend = function() {
+                const base64Cover = reader.result;
+                
+                const newAnime = {
+                    id: Date.now(),
+                    title: title,
+                    plot: plot,
+                    cover: base64Cover,
+                    rating: 0.0,
+                    ratingCount: 0,
+                    scores: { story: 0.0, direction: 0.0, music: 0.0 } // 初始細項值
+                };
+                
+                animeDatabase.push(newAnime);
+                localStorage.setItem('animeData_v3', JSON.stringify(animeDatabase));
+                
+                document.getElementById('animeForm').reset();
+                alert("【系統提示】全新動漫數據及封面已同步至 V3 核心。");
+                switchPage('home');
+            };
+            
+            if (file) {
+                reader.readAsDataURL(file);
+            }
+        };
+
+        // 9. 網頁初始啟動序列
+        renderAnimeList();
+    </script>
+</body>
+</html>
