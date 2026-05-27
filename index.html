@@ -3,306 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ANIME-X // 動漫科技評分數據庫</title>
-    <style>
-        :root {
-            --bg-main: #f4f7f6;
-            --bg-card: rgba(255, 255, 255, 0.85);
-            --neon-blue: #00f0ff;
-            --neon-pink: #ff007f;
-            --text-main: #1a202c;
-            --text-muted: #4a5568;
-            --border-color: rgba(0, 240, 255, 0.3);
-            --radius: 12px;
-        }
-
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-        }
-
-        body {
-            background: var(--bg-main);
-            background-image: 
-                radial-gradient(rgba(0, 240, 255, 0.05) 1px, transparent 0),
-                radial-gradient(rgba(255, 0, 127, 0.05) 1px, transparent 0);
-            background-size: 24px 24px;
-            background-position: 0 0, 12px 12px;
-            color: var(--text-main);
-            min-height: 100vh;
-            padding-bottom: 60px;
-        }
-
-        /* 導覽列 */
-        header {
-            background: rgba(255, 255, 255, 0.8);
-            backdrop-filter: blur(10px);
-            border-bottom: 2px solid var(--neon-blue);
-            padding: 15px 40px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            box-shadow: 0 4px 20px rgba(0, 240, 255, 0.1);
-        }
-
-        .logo {
-            font-size: 24px;
-            font-weight: 900;
-            letter-spacing: 2px;
-            background: linear-gradient(45deg, var(--text-main), var(--neon-pink));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            cursor: pointer;
-        }
-
-        .nav-btn {
-            background: transparent;
-            border: 1px solid var(--neon-blue);
-            color: var(--text-main);
-            padding: 8px 16px;
-            border-radius: var(--radius);
-            cursor: pointer;
-            font-weight: bold;
-            transition: all 0.3s ease;
-            box-shadow: 0 0 10px rgba(0, 240, 255, 0.2);
-        }
-
-        .nav-btn:hover {
-            background: var(--neon-blue);
-            color: #fff;
-            box-shadow: 0 0 15px var(--neon-blue);
-            transform: translateY(-2px);
-        }
-
-        /* 主容器 */
-        .container {
-            max-width: 1200px;
-            margin: 40px auto;
-            padding: 0 20px;
-        }
-
-        /* 頁面切換機制 */
-        .page {
-            display: none;
-        }
-        .page.active {
-            display: block;
-            animation: fadeIn 0.5s ease;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        /* --- 首頁：動漫列表 --- */
-        .anime-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-            gap: 30px;
-        }
-
-        .anime-card {
-            background: var(--bg-card);
-            border: 1px solid rgba(0, 0, 0, 0.05);
-            border-radius: var(--radius);
-            overflow: hidden;
-            cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
-            position: relative;
-        }
-
-        .anime-card::before {
-            content: '';
-            position: absolute;
-            top: 0; left: 0; right: 0; height: 4px;
-            background: linear-gradient(90deg, var(--neon-blue), var(--neon-pink));
-            opacity: 0;
-            transition: opacity 0.3s;
-        }
-
-        .anime-card:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 15px 35px rgba(0, 240, 255, 0.2);
-            border-color: var(--neon-blue);
-        }
-
-        .anime-card:hover::before {
-            opacity: 1;
-        }
-
-        .anime-cover {
-            width: 100%;
-            height: 300px;
-            object-fit: cover;
-            background: #e2e8f0;
-        }
-
-        .anime-info {
-            padding: 15px;
-        }
-
-        .anime-title {
-            font-size: 18px;
-            font-weight: bold;
-            margin-bottom: 8px;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-
-        .anime-rating-tag {
-            display: inline-block;
-            background: rgba(0, 240, 255, 0.1);
-            color: var(--text-main);
-            padding: 3px 8px;
-            border-radius: 4px;
-            font-size: 14px;
-            font-weight: bold;
-            border-left: 3px solid var(--neon-blue);
-        }
-
-        /* --- 詳細內頁 --- */
-        .detail-wrapper {
-            display: grid;
-            grid-template-columns: 350px 1fr;
-            gap: 40px;
-            background: var(--bg-card);
-            padding: 40px;
-            border-radius: var(--radius);
-            border: 1px solid var(--border-color);
-            box-shadow: 0 20px 40px rgba(0, 240, 255, 0.05);
-        }
-
-        @media (max-width: 768px) {
-            .detail-wrapper { grid-template-columns: 1fr; }
-        }
-
-        .detail-cover {
-            width: 100%;
-            border-radius: var(--radius);
-            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-            border: 2px solid linear-gradient(var(--neon-blue), var(--neon-pink));
-        }
-
-        .detail-content h2 {
-            font-size: 32px;
-            margin-bottom: 20px;
-            border-bottom: 2px solid rgba(0,0,0,0.05);
-            padding-bottom: 10px;
-        }
-
-        .plot-box {
-            background: rgba(0, 0, 0, 0.02);
-            padding: 20px;
-            border-left: 4px solid var(--neon-pink);
-            border-radius: 4px;
-            margin-bottom: 30px;
-            line-height: 1.8;
-            color: var(--text-muted);
-        }
-
-        /* 評分互動組件 */
-        .rating-section {
-            background: rgba(0, 240, 255, 0.05);
-            padding: 20px;
-            border-radius: var(--radius);
-            border: 1px dashed var(--neon-blue);
-        }
-
-        .stars {
-            display: flex;
-            gap: 10px;
-            margin: 15px 0;
-        }
-
-        .star {
-            font-size: 35px;
-            cursor: pointer;
-            color: #cbd5e0;
-            transition: color 0.2s;
-        }
-
-        .star.active, .star:hover, .star:hover ~ .star {
-            color: #ffb703;
-            text-shadow: 0 0 10px rgba(255, 183, 3, 0.5);
-        }
-
-        /* --- 新增動漫表單 --- */
-        .form-box {
-            max-width: 600px;
-            margin: 0 auto;
-            background: var(--bg-card);
-            padding: 40px;
-            border-radius: var(--radius);
-            border: 1px solid var(--border-color);
-            box-shadow: 0 20px 40px rgba(0,0,0,0.05);
-        }
-
-        .form-box h2 {
-            margin-bottom: 25px;
-            text-align: center;
-            letter-spacing: 1px;
-        }
-
-        .form-group {
-            margin-bottom: 20px;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: bold;
-            font-size: 14px;
-        }
-
-        .form-control {
-            width: 100%;
-            padding: 12px;
-            border: 1px solid #cbd5e0;
-            border-radius: 6px;
-            background: rgba(255,255,255,0.5);
-            font-size: 16px;
-            transition: all 0.3s;
-        }
-
-        .form-control:focus {
-            outline: none;
-            border-color: var(--neon-blue);
-            box-shadow: 0 0 10px rgba(0, 240, 255, 0.3);
-            background: #fff;
-        }
-
-        .submit-btn {
-            width: 100%;
-            background: linear-gradient(45deg, var(--neon-blue), var(--neon-pink));
-            color: white;
-            border: none;
-            padding: 14px;
-            border-radius: 6px;
-            font-size: 16px;
-            font-weight: bold;
-            cursor: pointer;
-            box-shadow: 0 4px 15px rgba(255, 0, 127, 0.3);
-            transition: transform 0.2s, box-shadow 0.2s;
-        }
-
-        .submit-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(255, 0, 127, 0.5);
-        }
-    </style>
+    <title>ANIME-X // 科技明亮風動漫資料庫</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
     <header>
-        <div class="logo" onclick="switchPage('home')">ANIME-X //</div>
+        <div class="logo" onclick="switchPage('home')">Anime-X //</div>
         <button class="nav-btn" onclick="switchPage('add-page')">+ 新增動漫數據</button>
     </header>
 
@@ -314,7 +21,7 @@
         </div>
 
         <div id="detail-page" class="page">
-            <button class="nav-btn" onclick="switchPage('home')" style="margin-bottom: 20px;">← 返回列表</button>
+            <button class="nav-btn nav-btn-secondary" onclick="switchPage('home')" style="margin-bottom: 24px;">← 返回大廳</button>
             <div class="detail-wrapper" id="detailWrapper">
                 </div>
         </div>
@@ -325,11 +32,11 @@
                 <form id="animeForm">
                     <div class="form-group">
                         <label>動漫作品名稱</label>
-                        <input type="text" id="titleInput" class="form-control" placeholder="請輸入動漫名稱..." required>
+                        <input type="text" id="titleInput" class="form-control" placeholder="請輸入動漫標題..." required>
                     </div>
                     <div class="form-group">
                         <label>劇情簡介介紹</label>
-                        <textarea id="plotInput" class="form-control" rows="6" placeholder="請輸入詳細的劇情介紹與簡介..." required></textarea>
+                        <textarea id="plotInput" class="form-control" rows="6" placeholder="請輸入詳細的精采劇情簡介..." required></textarea>
                     </div>
                     <div class="form-group">
                         <label>上傳動漫封面</label>
@@ -343,13 +50,13 @@
     </div>
 
     <script>
-        // 初始化預設資料（如果本地沒資料的話）
+        // 1. 初始化預設實驗數據
         const defaultAnimes = [
             {
                 id: 1,
                 title: "Cyberpunk: Edgerunners",
                 plot: "講述一名街頭浪子試圖在迷戀科技和身體改造的未來城市中生存下來。在失去了一切之後，他選擇成為一名邊緣行者（Edgerunners）——一種法外狂徒的雇傭兵，以此維持生計。",
-                cover: "https://images.unsplash.com/photo-1578632767115-351597cf2477?w=500",
+                cover: "https://images.unsplash.com/photo-1578632767115-351597cf2477?w=600",
                 rating: 4.8,
                 ratingCount: 1
             },
@@ -357,28 +64,28 @@
                 id: 2,
                 title: "進擊的巨人 (Attack on Titan)",
                 plot: "百年前世界莫名出現神秘的巨人怪物，不斷殘忍食人，人類幾乎慘遭滅絕。倖存的人類建造了三道巨大防護牆來阻止巨人的入侵，並享受了一百年的和平。直到那一天，超大型巨人打破了牆壁...",
-                cover: "https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?w=500",
+                cover: "https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?w=600",
                 rating: 4.9,
                 ratingCount: 1
             }
         ];
 
-        // 從 LocalStorage 取得資料或載入預設值
-        let animeDatabase = JSON.parse(localStorage.getItem('animeData')) || defaultAnimes;
+        // 2. 資料庫讀取 (檢測 localStorage)
+        let animeDatabase = JSON.parse(localStorage.getItem('animeData_v2')) || defaultAnimes;
         let currentAnimeId = null;
 
-        // 頁面切換控制
+        // 3. 視窗分頁切換控制
         function switchPage(pageId) {
             document.querySelectorAll('.page').forEach(page => page.classList.remove('active'));
             document.getElementById(pageId).classList.add('active');
-            window.scrollTo(0,0);
+            window.scrollTo(0, 0);
             
             if(pageId === 'home') {
                 renderAnimeList();
             }
         }
 
-        // 渲染首頁列表
+        // 4. 渲染首頁卡片矩陣
         function renderAnimeList() {
             const grid = document.getElementById('animeGrid');
             grid.innerHTML = '';
@@ -389,7 +96,7 @@
                 card.onclick = () => openDetailPage(anime.id);
                 
                 card.innerHTML = `
-                    <img class="anime-cover" src="${anime.cover}" alt="${anime.title}">
+                    <img class="anime-cover" src="${anime.cover}" alt="${anime.title}" loading="lazy">
                     <div class="anime-info">
                         <div class="anime-title">${anime.title}</div>
                         <div class="anime-rating-tag">★ ${anime.rating.toFixed(1)}</div>
@@ -399,7 +106,7 @@
             });
         }
 
-        // 打開單獨的詳細介紹網頁
+        // 5. 載入並產生單獨的「動漫獨立頁面」
         function openDetailPage(id) {
             currentAnimeId = id;
             const anime = animeDatabase.find(a => a.id === id);
@@ -411,16 +118,18 @@
                 </div>
                 <div class="detail-content">
                     <h2>${anime.title}</h2>
-                    <div style="margin-bottom:20px;">
-                        <span class="anime-rating-tag" style="font-size:18px;">目前評分：★ <span id="avgRating">${anime.rating.toFixed(1)}</span> (${anime.ratingCount}人評分)</span>
+                    <div style="margin-bottom: 24px;">
+                        <span class="anime-rating-tag" style="font-size: 16px; padding: 6px 12px;">
+                            目前數據：★ <span id="avgRating">${anime.rating.toFixed(1)}</span> (${anime.ratingCount} 次評分)
+                        </span>
                     </div>
-                    <h3 style="margin-bottom:10px; color:var(--neon-pink)">[ 劇情簡介 ]</h3>
+                    <h3 class="plot-title">// 劇情簡介 DESCRIPTION</h3>
                     <div class="plot-box">
                         ${anime.plot.replace(/\n/g, '<br>')}
                     </div>
                     
                     <div class="rating-section">
-                        <h3>// 評分此部動畫</h3>
+                        <h3>// 評分此部動畫 DATA FEEDBACK</h3>
                         <div class="stars" id="starContainer">
                             <span class="star" data-value="1">★</span>
                             <span class="star" data-value="2">★</span>
@@ -428,48 +137,63 @@
                             <span class="star" data-value="4">★</span>
                             <span class="star" data-value="5">★</span>
                         </div>
-                        <p id="ratingStatus" style="font-size:14px; color:var(--text-muted);">點擊星星進行實時評分</p>
+                        <p class="rating-status" id="ratingStatus">系統就緒。請點選上方星星欄位進行實時評分...</p>
                     </div>
                 </div>
             `;
             
-            setupRatingSystem();
+            bindRatingEvents();
             switchPage('detail-page');
         }
 
-        // 處理動態互動的評分系統
-        function setupRatingSystem() {
+        // 6. 互動式即時評分演算法邏輯
+        function bindRatingEvents() {
             const stars = document.querySelectorAll('.star');
             stars.forEach(star => {
+                // 滑鼠移入與移出動態視覺回饋
+                star.onmouseover = function() {
+                    const val = parseInt(this.getAttribute('data-value'));
+                    stars.forEach(s => {
+                        if(parseInt(s.getAttribute('data-value')) <= val) s.classList.add('active');
+                    });
+                };
+                
+                star.onmouseout = function() {
+                    stars.forEach(s => s.classList.remove('active'));
+                };
+
+                // 點擊即時結算分數
                 star.onclick = function() {
                     const userRating = parseInt(this.getAttribute('data-value'));
                     const anime = animeDatabase.find(a => a.id === currentAnimeId);
                     
-                    // 計算新評分 (簡易平均值權重公式)
+                    // 動態權重公式計算
                     let totalScore = (anime.rating * anime.ratingCount) + userRating;
                     anime.ratingCount += 1;
                     anime.rating = totalScore / anime.ratingCount;
                     
-                    // 儲存至本地快取
-                    localStorage.setItem('animeData', JSON.stringify(animeDatabase));
+                    // 寫入本地存儲空間
+                    localStorage.setItem('animeData_v2', JSON.stringify(animeDatabase));
                     
-                    // 即時更新 UI
+                    // 即時刷新 UI 數據
                     document.getElementById('avgRating').innerText = anime.rating.toFixed(1);
-                    document.getElementById('ratingStatus').innerText = `感謝評分！你給了 ${userRating} 星！`;
+                    document.getElementById('ratingStatus').innerText = `傳輸成功！您已成功提交 ${userRating} 星評分！`;
                     
-                    // 高亮點選的星星
+                    // 鎖定高亮該分數
                     stars.forEach(s => {
+                        s.onmouseover = null;
+                        s.onmouseout = null;
                         if(parseInt(s.getAttribute('data-value')) <= userRating) {
-                            s.style.color = '#ffb703';
+                            s.classList.add('active');
                         } else {
-                            s.style.color = '#cbd5e0';
+                            s.classList.remove('active');
                         }
                     });
-                }
+                };
             });
         }
 
-        // 新增動漫與封面轉換處理 (Base64)
+        // 7. 新增動漫表單與封面圖片轉化 (FileReader Base64 技術)
         document.getElementById('animeForm').onsubmit = function(e) {
             e.preventDefault();
             
@@ -479,11 +203,12 @@
             const file = fileInput.files[0];
             
             const reader = new FileReader();
+            
             reader.onloadend = function() {
-                const base64Cover = reader.result; // 將圖片轉成網頁能保存的字串
+                const base64Cover = reader.result; // 將上傳的本機封面圖片轉化為資料庫可存字串
                 
                 const newAnime = {
-                    id: Date.now(), // 用時間戳當不重複 ID
+                    id: Date.now(), // 毫秒時間戳記作為唯一識別碼
                     title: title,
                     plot: plot,
                     cover: base64Cover,
@@ -492,20 +217,20 @@
                 };
                 
                 animeDatabase.push(newAnime);
-                localStorage.setItem('animeData', JSON.stringify(animeDatabase));
+                localStorage.setItem('animeData_v2', JSON.stringify(animeDatabase));
                 
-                // 表單重設與跳轉
+                // 表單重設、提示並跳轉回大廳
                 document.getElementById('animeForm').reset();
-                alert("動漫數據已成功同步上傳！");
+                alert("【系統提示】全新動漫數據及封面已同步至瀏覽器核心。");
                 switchPage('home');
-            }
+            };
             
             if (file) {
                 reader.readAsDataURL(file);
             }
         };
 
-        // 網頁初始化載入
+        // 8. 網頁初始啟動序列
         renderAnimeList();
     </script>
 </body>
